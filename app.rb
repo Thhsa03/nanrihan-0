@@ -6,7 +6,7 @@ EVENTS = [
   {name:"レディース釣りマッチ", start_date: Date.new(2014,8,6) , end_date: Date.new(2014,10,29), location:"福岡市海づり公園", latlng:"33.626576,130.229021", comment:"一杯釣れるかな"}  
 ]
 
-get '/' do
+get '/event' do
   "hello, world"
 end
 
@@ -15,9 +15,24 @@ get '/events' do
   erb :events
 end
 
+get '/event/new' do
+  erb :event_new
+end
+
 get '/event/:id' do 
   id = params[:id].to_i
   @event = EVENTS[id]
   p @event
   erb :event
+end
+
+post '/event' do
+   EVENTS << {
+      name: params[:name],
+      start_date: Date.parse(params[:start_date]),
+      end_date: Date.parse(params[:end_date]),
+      location: params[:location],
+      comment: params[:comment]
+   }
+   redirect "/events"  
 end
