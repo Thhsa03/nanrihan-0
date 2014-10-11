@@ -12,12 +12,13 @@
 	<tbody>
 <% @events.each_with_index do |event, i| %>
 	<tr>
-		<td><a href="/event/<%= i %>"><%= event[:name] %></a></td>
-		<td><%= event[:start_date] %> 〜 <%= event[:end_date] %></td>
-		<td><%= event[:location] %></td>
+		<td><a href="/event/<%= i %>"><%= event.name %></a></td>
+		<td><%= event.start_date %> 〜 <%= event.end_date %></td>
+		<td><%= event.location %></td>
 	</tr>
 <% end %>
 	</tbody>
 </table>
+<a href="/event/new">新規登録</a>
 </body>
 </html>

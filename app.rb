@@ -1,9 +1,21 @@
 require 'sinatra'
 require 'sinatra/reloader'
 
+class Event
+  attr_accessor :name, :start_date, :end_date, :location, :comment
+
+  def initialize(name, start_date, end_date, location, latlng = nil, comment = nil)
+    @name = name
+    @start_date = start_date
+    @end_date = end_date
+    @location = location
+    @comment = comment
+  end
+end
+
 EVENTS = [
-  {name:"博多座開場15周年記念「博多座全公演ポスター展」", start_date: Date.new(2014,3,25) , end_date: Date.new(2015,3,31), location:"福岡市役所15階（議会棟側） ショーケース", latlng:"33.5983384,130.4210585", comment:"面白いよ"},
-  {name:"レディース釣りマッチ", start_date: Date.new(2014,8,6) , end_date: Date.new(2014,10,29), location:"福岡市海づり公園", latlng:"33.626576,130.229021", comment:"一杯釣れるかな"}  
+  Event.new("博多座開場15周年記念「博多座全公演ポスター展」", Date.new(2014,3,25) , Date.new(2015,3,31), "福岡市役所15階（議会棟側） ショーケース", "33.5983384,130.4210585", "面白いよ"),
+  Event.new("レディース釣りマッチ", Date.new(2014,8,6) , Date.new(2014,10,29), "福岡市海づり公園", "33.626576,130.229021", "一杯釣れるかな") 
 ]
 
 get '/event' do

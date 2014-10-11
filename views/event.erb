@@ -3,9 +3,10 @@
 	<title>イベント詳細</title>
 </head>
 <body>
-イベント名: <%= @event[:name] %><br>
-日時: <%= @event[:start_date] %> 〜 <%= @event[:end_date] %><br>
-場所: <%= @event[:location] %><br>
-コメント: <%= @event[:comment] %><br>
+イベント名: <%= @event.name %><br>
+日時: <%= @event.start_date %> 〜 <%= @event.end_date %><br>
+場所: <%= @event.location %><br>
+コメント: <%= @event.comment %><br>
+<a href="/events">一覧にもどる</a>
 </body>
 </html>
