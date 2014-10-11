@@ -10,6 +10,11 @@ get '/' do
   "hello, world"
 end
 
+get '/events' do
+  @events = EVENTS
+  erb :events
+end
+
 get '/event/:id' do 
   id = params[:id].to_i
   @event = EVENTS[id]
