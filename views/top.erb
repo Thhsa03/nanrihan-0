@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="" lang="ja" xml:lang="ja" dir="ltr">
+<head>
+    <title>トップページ</title>
+    <link rel="stylesheet" type="text/css" href="css/top.css">
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDuuhtgBe7wLTq3ck4t3xWth-c7eAZuX2M&sensor=false"></script>
+    <script type="text/javascript" src="js/GoogleMapsScript_Top.js"></script>
+</head>
+<body onload="init()">
+    <div id="main">
+        <form name="user_new" action="/user_new" method="get">
+            <input type="hidden" name="page" value="<%= request.url  %>">
+        </form>
+        <% if @login_flag then%>
+            <!--<a onclick="/user_top" style="text-decoration: underline; color: #00f;cursor: pointer;">-->
+            <a href="/user_top">
+                <img src="img/user_top.gif" border="0">
+            </a>
+        <% else %>
+            <form name="form1" action="/login" method="get">
+                <input type="hidden" name="page" value="<%= request.url  %>">
+            </form>
+            <a onclick="document.form1.submit();" style="cursor: pointer;">
+                <img src="img/login.gif" border="0">
+            </a>
+        <% end %>
+        
+        <a onclick="document.user_new.submit();" style="text-decoration: underline; color: #00f;cursor: pointer;">
+            <img src="img/user_new.gif">
+        </a>
+        <ul id="dropmenu">
+            <li><a href="#">イベンチャー</a>
+                <ul>
+                    <li><a href="/event_new">イベントの登録</a></li>
+                    <li><a href="#">イベントの削除</a></li>
+                    <li><a href="/">登録されているすべてのイベント</a></li>
+                    <li><a href="#">サブメニュー</a></li>
+                </ul>
+            </li>
+            <li><a href="#">繋がり</a>
+                <ul>
+                    <li><a href="#">サブメニュー</a></li>
+                    <li><a href="#">サブメニュー</a></li>
+                    <li><a href="#">サブメニュー</a></li>
+                    <li><a href="#">サブメニュー</a></li>
+                </ul>
+            </li>
+            <li><a href="#">メニュー</a>
+                <ul>
+                    <li><a href="#">サブメニュー</a></li>
+                    <li><a href="#">サブメニュー</a></li>
+                    <li><a href="#">サブメニュー</a></li>
+                </ul>
+            </li>
+            <li><a href="#">メニュー</a>
+                <ul>
+                    <li><a href="#">サブメニュー</a></li>
+                    <li><a href="#">サブメニュー</a></li>
+                </ul>
+            </li>
+            <li><a href="#">メニュー</a>
+                <ul>
+                    <li><a href="#">サブメニュー</a></li>
+                    <li><a href="#">サブメニュー</a></li>
+                    <li><a href="#">サブメニュー</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="width_set">
+        <form method="post" action="/top_info_chagne">
+        <p>
+            <select name="age" onchange="submit(this.form)">
+                <option value="選択1" selected>新着順</option>
+                <option value="選択2">参加予定が多い順</option>
+                <option value="選択3">見られた回数が多い順</option>
+                <option value="選択4">過去に開催した時の評価が高い順</option>
+            </select>
+        </p>
+        </form>
+        <!- 情報 ->
+        <table>
+            <% for i in 0..1 %>
+            <tr>
+                <% for j in 0..3 %>
+                <td>
+                    <% if @events.size > (j+4*i) then %>
+                    <%= @events[j+4*i].name %>
+                    <% end %>
+                </td>
+                <% end %>
+            </tr>
+            <% end %>
+        </table>
+    </div>
+    <div class="2">
+        <h1>注目のキーワード</h1>
+    </div>
+    <div>
+        <form action='/search' method='post'>
+        <fieldset>
+            <!- 枠の作成 ->
+            <p>
+                <h1>
+                    イベントの検索</h1>
+                <input name="keyword" class="search_textfield" type="text" placeholder="キーワードを入力して下さい">
+                <input type="submit" class="control_style" value="検索">
+            </p>
+        </fieldset>
+        </form>
+    </div>
+    <div class="googlemaps">
+        <form action='/search' method='post'>
+        <p>
+            マップ検索
+            <input name="keyword" class="search_textfield" type="text" placeholder="検索したい地域">
+            <input type="submit" class="control_style" value="検索">
+        </p>
+        </form>
+        <form action='/search' method='post'>
+        <p>
+            現在の 経度 緯度
+            <input name="keyword" class="search_textfield" type="text">
+            <input name="keyword" class="search_textfield" type="text">
+            <input type="submit" class="control_style" value="検索">
+        </p>
+        </form>
+        <div id="map_canvas"  style="width:800px; height:300px">
+        </div>
+    </div>
+    <div>
+    <br>
+    <br>
+    <br>
+    <br>
+    </div>
+</div>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="" lang="ja" xml:lang="ja" dir="ltr">
+<head>
+    <title>ログイン</title>
+    <link rel="stylesheet" type="text/css" href="css/logIn.css">
+</head>
+<body>
+    <div id="wrapper">
+        <h1>ログイン</h1>
+        <form action= '/login_end' method='post'>
+            <fieldset>
+                <input type=hidden name="page" value= <%= @page%>>
+                <p>
+                    <label for="name"> メールアドレス</label>
+                </p>
+                <p>
+                    <input type="text" class="text_field" name="mail"  placeholder="メールアドレス">
+                </p>
+                <p>
+                    <label for="password">パスワード</label>
+                </p>
+                <p>
+                    <input type="password" class="text_field" name="pass"  placeholder="パスワード">
+                </p>
+                <p>
+                    <input type="checkbox" name="example" value="サンプル" checked>次回から自動的にログイン
+                </p>
+                <input type="submit" value="ログイン">
+            </fieldset>
+        </form>
+    </div>
+</body>
+</html>

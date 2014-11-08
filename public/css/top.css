@@ -1,0 +1,135 @@
+body
+{  
+  text-align: center;  
+  position:absolute;
+  top:60px;
+  width:100%;
+}
+
+#dropmenu{
+  list-style-type: none;
+  width: 800px; /*幅*/
+  height: 40px; /*高さ*/
+  margin: 30px auto 30px;/*中央？*/
+  padding: 0;    /*余白関連*/
+  background: #8a9b0f;/*背景色*/
+  border-bottom: 5px solid #535d09;/*アンダーライン 色*/
+  border-radius: 4px 4px 0 0;
+}
+#dropmenu li{
+  position: relative;
+  width: 20%;
+  float: left;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+#dropmenu li a{
+  display: block;
+  margin: 0;
+  padding: 15px 0 11px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  text-decoration: none;
+}
+#dropmenu li ul{
+  list-style: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  border-radius: 0 0 3px 3px;
+}
+#dropmenu li:last-child ul{
+  left: -100%;
+  width: 100%
+}
+#dropmenu li ul li{
+  overflow: hidden;
+  width: 200%;
+  height: 0;
+  color: #fff;
+  -moz-transition: .2s;
+  -webkit-transition: .2s;
+  -o-transition: .2s;
+  -ms-transition: .2s;
+  transition: .2s;
+}
+#dropmenu li ul li a{
+  padding: 13px 15px;
+  background: #6e7c0c;
+  text-align: left;
+  font-size: 12px;
+  font-weight: normal;
+}
+#dropmenu li:hover > a{
+  background: #6e7c0c;
+  color: #eff7b1;
+}
+#dropmenu > li:hover > a{
+  border-radius: 3px 3px 0 0;
+}
+#dropmenu li:hover ul li{
+  overflow: visible;
+  height: 38px;
+  border-top: 1px solid #7c8c0e;
+  border-bottom: 1px solid #616d0b;
+}
+#dropmenu li:hover ul li:first-child{
+  border-top: 0;
+}
+#dropmenu li:hover ul li:last-child{
+  border-bottom: 0;
+}
+#dropmenu li:hover ul li:last-child a{
+  border-radius: 0 0 3px 3px;
+}
+
+.width_set
+{
+  width: 400px;
+  text-align: left;  
+  background : #9cf ;
+  margin:0px auto;
+}
+
+.control_style
+{
+  /* 影 */
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2),0 0 2px rgba(0,0,0,0.3);
+  /* 丸み */
+  border-radius: 3px;
+  height: 25px;
+  border:#a9a9a9 1px solid;
+  padding:0 3px;
+}
+.search_dlist
+{
+  width: 300px;
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2),0 0 2px rgba(0,0,0,0.3);
+  /* 丸み */
+  border-radius: 3px;
+  height: 25px;
+  border:#a9a9a9 1px solid;
+  padding:0 3px; 
+}
+.search_textfield
+{
+  width: 300px;
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2),0 0 2px rgba(0,0,0,0.3);
+  /* 丸み */
+  border-radius: 3px;
+  height: 25px;
+  border:#a9a9a9 1px solid;
+  padding:0 3px;
+}
+
+
+input:focus
+{
+  border-color: orange;
+  border:solid 1px #0F03AA;/* フォーカスの色*/
+}

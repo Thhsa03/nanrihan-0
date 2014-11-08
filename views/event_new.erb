@@ -1,14 +1,161 @@
-<html>
+<!DOCTYPE html>
+<html lang="ja">
 <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>イベント登録</title>
+    <!-- Bootstrap css-->
+    <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery 読み込み -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js" type="text/javascript"></script>
+    <!-- datepickerのcssを読み込み-->
+    <link href="lib/datepicker/css/datepicker.css" rel="stylesheet">
+    <!-- bootstrapのdatepicker--> 
+    <script src="lib/datepicker/js/bootstrap-datepicker.js" type="text/javascript"></script>
+    <!-- bootstrapのdatepickerを日本語化-->
+    <script src="lib/datepicker/js/locales/bootstrap-datepicker.ja.js" type="text/javascript"></script>
+    <script src = "js/XMLHttpRequest.js" type="text/javascript"></script>
+    <script type="text/javascript">
+  //  $(function() { $('#dp1').datepicker( { format: 'dd/mm/yyyy',language: 'ja'} ); } );
+    $(function() { $('.date').datepicker( { format: 'dd/mm/yyyy',language: 'ja'} ); } );
+    </script>
+    <!--google mapの埋め込み-->
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDuuhtgBe7wLTq3ck4t3xWth-c7eAZuX2M&sensor=false"></script>
+    <script type="text/javascript" src="js/GoogleMapsScript_Top.js"></script>
+
+
+    	<script type="text/javascript">
+        	var form = document.getElementById("select_img");
+        	var input = form.input_file;
+        	// 受信
+        	xhr.onload = function(e)
+	        {
+	            var text = xhr.response;
+	            if(text != "error")
+	            {
+	                document.getElementById("event_img").src = text;
+	            }
+	        };
+	        // 自動送信
+	        input.onchange = function ()
+	        {
+	            if(this.value)
+	            {
+	                if(!(window.FormData))
+	                {
+	                    form.submit();
+	                    return;
+	                }
+	                var form_data = new FormData(form);
+	                xhr.open(form.method, form.action); 
+	                xhr.responseType = "text";
+	                xhr.send(form_data);
+	            }
+	        };
+	        </script>
 </head>
-<body>
-<form method="post" action="/event">
-イベント名: <input type="text" name="name"><br>
-日時: <input type="text" name="start_date"> 〜 <input type="text" name="end_date"><br>
-場所: <input type="text" name="location"><br>
-コメント: <input type="text" name="comment"><br>
-<input type="submit" name="submit" value="登録">
-</form>
+<body onload="init()">
+	<div id="header" class="container" style="background:red;"></div>
+	<div class="container" style="padding:20px 0"><!-- 左右スペースをどれだけ空けるか-->
+		<form action="/event_new_end" method='post'>
+			<div class="row">
+			<!--inline horizontal 指定なしがある-->
+				<div class="col-sm-5">
+					<div class="form-group">
+						<!--has-error sr-only -->
+						<label class="control-label" for="title">イベント名</label>
+						<input type="text" class="form-control" name="title" placeholder="イベント名">
+						<!-- <span class="helpe-block">エラー</span>-->
+						<!-- <input type="subit" class="btn btn-primary" value="送信">-->
+					</div>
+				</div>
+			<div class "row">
+			<div class="col-sm-12" id="map_canvas"  style="width:800px; height:300px">
+
+        	</div>
+        	<div class="col-sm-12">
+        		<input type="text" class="form-control" id= "lon_text" name="lon" placeholder="経度">
+        		<input type="text" class="form-control" id= "lat_text" name="lat" placeholder="緯度">
+        		<button type="button" class="btn btn-info" onclick="getCenterPosText()">位置の所得</button>
+        	</div>
+        	</div>
+        	<!--スタイルが崩れないように-->
+        	<div class="clearfix"></div>
+        	<div class="col-sm-6">
+
+<!--		<form class="form-horizontal" style="margin-bottonm: 15px">
+				<div class="form-group">
+					<label class="control-label col-sm-2" for="title">イベント名</label>
+					<div class="col-sm-4">
+						<input type="text" class="form-control" placeholder="イベント名">
+					</div>
+				</div>
+			</form>-->
+				<!--datepikeの独自パラメータ data-date format -->
+	        	<!-- これはjavascriptで設定する方法もある。 その方が便利なこともある。-->
+	        	<img src="img/default_event_img.png" id ="event_img" width="168" height="228"><br>
+	        	<form action="/upload" method ="POST" enctype="multipart/form-data" id="select_img">
+	        		<input type="file" name="input_file">
+        		</form>
+
+	        	<button class="btn btn-info">他にも画像を使う</button>
+	        </div>
+	        <div class="col-sm-6">
+		        <table class="table table-hover">
+	  				<thead></thead>
+	  				<tbody>
+	  				<!-- jsで行を増やす アニメーション？-->
+	    			<tr>
+	      				<td>id</td>
+	      				<td>img</td>
+	    			</tr>
+
+				  </tbody>
+				</table>
+			</div>
+        	<div class="clearfix"></div>
+	        <div class="col-sm-12">
+    	    	<p>分類タグ<br>
+		        	<% for i in 0..9 %>
+		                <% for j in 0..4 %>
+		                <div class="col-sm-1">
+		                    <input  class="form-control" name="tags[]" type="text">
+		                </div>
+		                <% end %>
+		                <br>
+
+        	<div class="clearfix"></div>
+		            <% end %>
+		        </p>
+		    </div>
+        	<div class="clearfix"></div>
+		    <div class="col-sm-12">
+			    <label class="control-label">日時</label>
+		        <div class="input-group date col-sm-4" data-date="12-02-2012">
+		           	<input class="form-control" size="16" type="text"><!--結合させるもの-->
+		           	<span class="input-group-addon"><!--inputグループ 結合-->
+		           		<span class="add-on glyphicon glyphicon-th"></span><!--カレンダーアイコン-->
+		           	</span>
+		        </div>
+		        <!-- h系のタグを使うと崩れる-->
+		        <label class="control-label" >~</label>
+		        <div class="input-group date col-sm-4" data-date="12-02-2012">
+		           	<input class="form-control" size="16" type="text"><!--結合させるもの-->
+		           	<span class="input-group-addon"><!--inputグループ 結合-->
+		           		<span class="add-on glyphicon glyphicon-th"></span><!--カレンダーアイコン-->
+		           	</span>
+		        </div>
+		    </div>
+
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-4"><!--左側2カラム 長さ4カラム-->
+					<input type="subit" class="btn btn-primary" value="送信">
+				</div>
+			</div>
+		</form>
+	</div>
+	<div id="footer" class="container"></div>
+	<script src="lib/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 </body>
 </html>

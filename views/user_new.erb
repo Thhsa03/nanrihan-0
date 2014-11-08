@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="" lang="ja" xml:lang="ja" dir="ltr">
+<head>
+    <title>ユーザー登録</title>
+    <link rel="stylesheet" type="text/css" href="css/user_new.css">
+</head>
+<body>
+    <div>
+        <h1>ユーザー登録</h1>
+        <input type="hidden" name="page" value="<%= @page%>">
+    </div>
+    <form id='basic_user_info_form'>
+    <fieldset>
+        <div id="basic_user_info_title_div">
+            ユーザーネーム<br>
+            メールアドレス<br>
+            パスワード:<br>
+            パスワードの再入力:<br>
+        </div>
+        <div id="basic_user_info_text_div">
+            <input class="basic_user_info_text_field" name="s_user_name" type="text" placeholder="ユーザーネーム"><br>
+            <input class="basic_user_info_text_field" name="s_mail"  type="text" placeholder="メールアドレス" style="ime-mode: disabled"><br>
+            <input class="basic_user_info_text_field" name="s_password" type="password" placeholder="パスワード"><br>
+            <input class="basic_user_info_text_field" name="password_c" type="password" placeholder="パスワード再入力"><br>
+        </div>
+    </fieldset>
+    </form>
+    <fieldset>
+    <div id ="publishing_setting_div">
+        <input type="checkbox" name="publishing_setting1">公開する<br>
+    </div>
+    <div id ="user_img_setting_div">
+        <img src="img/default_user_img.png" id ="user_img" width="168" height="228"><br>
+        <form action="/upload" method ="POST" enctype="multipart/form-data" id="select_img">
+            <input type="file" name="input_file">
+        </form>
+        <script type="text/javascript" src="js/XMLHttpRequest.js" ></script>
+        <script type="text/javascript">
+        var form = document.getElementById("select_img");
+        var input = form.input_file;
+        xhr.onload = function(e)
+        {
+            var text = xhr.response;
+            if(text != "error")
+            {
+                document.getElementById("user_img").src = text;
+            }
+        };
+        input.onchange = function ()
+        {
+            if(this.value)
+            {
+                if(!(window.FormData))
+                {
+                    form.submit();
+                    return;
+                }
+                var form_data = new FormData(form);
+                xhr.open(form.method, form.action); 
+                xhr.responseType = "text";
+                xhr.send(form_data);
+            }
+        };
+        </script>
+    </div>
+    </fieldset>
+    <fieldset>
+
+<script language="javascript" type="text/javascript">
+function xSubmit()
+{
+    d=document;
+    d.f.user_name.value = d.getElementsByName("s_user_name")[0].value;
+    d.f.password.value = d.getElementsByName("s_password")[0].value;
+    d.f.mail.value = d.getElementsByName("s_mail")[0].value;
+}
+</script>
+
+    <form action="/user_new_end" method='post' name="f" onsubmit="return xSubmit()">
+        <input type="hidden" name="user_name">
+        <input type="hidden" name="password">
+        <input type="hidden" name="mail"> 
+    <div>
+        <p>趣味、職業、その他ユーザー情報タグ:<br>
+            <% for i in 0..9 %>
+                <% for j in 0..4 %>
+                    <input class="tag_text_field" name="tags[]" type="text">
+                <% end %>
+                <br>
+            <% end %>
+        </p>
+    </div>
+    </fieldset>
+    <div>
+        <fieldset>
+            <label for="name">設定</label><br>
+            地域設定
+            <input class="basic_user_info_text_field" name="name" type="text" placeholder="地域"><br>
+            <input type="checkbox" name="setting_1" value="サンプル">投稿したイベント開始カウントダウンをする。<br>
+            <input type="checkbox" name="setting_2" value="サンプル">投稿したイベント終了カウントダウンをする。<br>
+            <input type="checkbox" name="setting_3" value="サンプル">
+        </fieldset>
+        <input type="submit" value="登録">
+    </div>
+    </form>
+    <br>
+    <!- script type="text/javascript" src="js/user_new.js" ->
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="" lang="ja" xml:lang="ja" dir="ltr">
+<head>
+    <title>ユーザー登録</title>
+    <link rel="stylesheet" type="text/css" href="user_new.css">
+</head>
+<body>
+    <div>
+        <h1>ユーザー登録</h1>
+        <form action= '/user_new_end' method='post'>
+            <fieldset>
+            <input type=hidden name="page" value= <%= @page%>>
+            <p>
+                <label for="name"> ユーザーネーム:</label>
+                <input name="name" type="text" placeholder="ユーザーネーム">
+            </p>
+            <p>
+                <label for="mail"> メールアドレス:</label>
+                <input name="mail" type="text" placeholder="メールアドレス">
+            </p>
+            <p>
+                <label for="password">パスワード:</label>
+                <input name="password" type="password" placeholder="パスワード">
+            </p>
+            <p>
+                <label for="password_c">パスワードの再入力:</label>
+                <input name="password_c" type="password" placeholder="パスワード">
+            </p>
+            </fieldset>
+            <fieldset>
+            <p>
+                <label for="tag"> 趣味、職業、その他ユーザー情報タグ:</label><br>
+                <% for i in 0..9 %>
+                    <% for j in 0..4 %>
+                        <input class="tag_text_field" name="tag_"+<%= i*j %> type="text">
+                    <% end %>
+                    <br>
+                <% end %>
+            </p>
+            </fieldset>
+            <fieldset>
+                <label for="name">設定</label><br>
+                <input type="checkbox" name="setting_1">メールアドレスを公開する<br>
+                <input type="checkbox" name="setting_2" value="サンプル">投稿したイベント開始カウントダウンをする。<br>
+                <input type="checkbox" name="setting_3" value="サンプル">投稿したイベント終了カウントダウンをする。<br>
+                <input type="checkbox" name="setting_4" value="サンプル">
+            </fieldset>
+            <input type="submit" value="登録">
+        </form>
+    </div>
+</body>
+</html>

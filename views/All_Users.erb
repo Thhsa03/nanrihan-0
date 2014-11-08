@@ -1,4 +1,4 @@
-﻿<html>
+<html>
 <head>
 	<title>イベント一覧</title>
 </head>
@@ -11,12 +11,11 @@
 		<th>登録日</th>
 	</thead>
 	<tbody>
-<% @events.each_with_index do |event, i| %>
+<% @users.each_with_index do |user, i| %>
 	<tr>
-		<td><a href="/event/<%= i %>"><%= event.name %></a></td>
-		<td><%= event.start_date %> 〜 <%= event.end_date %></td>
-		<td><%= event.comment %></td>
-		<td><%= event.registration_date %></td>
+		<td><%= user.mail %></td>
+		<td><%= user.user_name %></td>
+		<td><%= user.pass %></td>
 	</tr>
 <% end %>
 

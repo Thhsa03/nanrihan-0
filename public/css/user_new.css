@@ -1,0 +1,69 @@
+body
+{
+  width: 850px;
+  margin:0px auto;
+}
+
+ /* 影指定テキストフィールド */
+.tag_text_field,.basic_user_info_text_field
+{
+	box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2),0 0 2px rgba(0,0,0,0.3);
+	border-radius: 3px;
+	height: 25px;
+	border:#a9a9a9 2px solid;
+	padding:0 3px;
+}
+
+/* ユーザー基本情報のテキストフィールド*/
+.basic_user_info_text_field
+{
+	width: 370px;
+	position: relative;
+	left: 0px;
+}
+
+/* 二段目 */
+/* 左分割*/
+#basic_user_info_title_div
+{
+	float: left;
+	width: 300px;
+	background : #9cf ;
+}
+/* 右分割*/
+#basic_user_info_text_div
+{
+	float: right;
+	width: 500px;
+}
+
+/* 三段目*/
+/* 左*/
+#publishing_setting_div
+{
+	float: left;
+	width: 300px;
+	background : #9cf ;
+}
+/* 右 */
+#user_img_setting_div
+{
+	float: right;
+	height: 250px;
+	width: 300px;
+}
+
+
+/* タグのテキストフィールド */
+.tag_text_field
+{
+	width: 150px;
+}
+
+input:focus {
+  border-color: orange;
+  border:solid 2px #EEA34A;
+}
+input[type=text], select {
+   outline: none;
+}

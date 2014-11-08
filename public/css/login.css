@@ -1,0 +1,29 @@
+body
+{
+	text-align: center;
+}
+ 
+div#wrapper
+{
+	width: 600px;  
+    margin: 0 auto;  
+    text-align: left;  
+    border: 4px solid #AFB0FF;
+}
+
+.text_field
+{
+	box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2),0 0 2px rgba(0,0,0,0.3);
+	border-radius: 3px;
+	width: 300px;
+	height: 25px;
+	border:#a9a9a9 1px solid;
+	padding:0 3px;
+}
+input:focus {
+  border-color: orange;
+  border:solid 2px #EEA34A;
+}
+input[type=text], select {
+   outline: none;
+}
