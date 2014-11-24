@@ -11,20 +11,42 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141027235825) do
+ActiveRecord::Schema.define(version: 20141124021331) do
+
+  create_table "app_status", force: true do |t|
+    t.string "user_name"
+  end
+
+  create_table "event_tag_attrs", force: true do |t|
+    t.string "name"
+  end
+
+  create_table "event_tags", force: true do |t|
+    t.string "name"
+  end
+
+  create_table "event_tags_event_tag_attrs", force: true do |t|
+    t.integer "event_tag_id"
+    t.integer "event_tag_attr_id"
+  end
 
   create_table "events", force: true do |t|
+    t.integer  "user_id"
     t.string   "name"
     t.date     "start_date"
     t.date     "end_date"
     t.string   "location"
     t.float    "latitude"
     t.float    "longitude"
-    t.string   "latlng"
     t.string   "comment"
     t.datetime "registration_date"
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "events_event_tags", force: true do |t|
+    t.integer "event_id"
+    t.integer "event_tag_id"
   end
 
   create_table "users", force: true do |t|
@@ -32,6 +54,8 @@ ActiveRecord::Schema.define(version: 20141027235825) do
     t.string   "mail"
     t.string   "pass"
     t.string   "comment"
+    t.string   "user_images"
+    t.string   "title"
     t.datetime "registration_date"
     t.datetime "created_at"
     t.datetime "updated_at"

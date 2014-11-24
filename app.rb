@@ -3,21 +3,53 @@ require 'sinatra/reloader'
 require 'sinatra/activerecord'
 require 'active_record'
 require 'securerandom'
+require 'json'
 
 # セッション
 use Rack::Session::Cookie,
 # :key => 'rack.session',
 # :domain => 'takumakei.blogspot.com',
 # :path => '/',
+#require "FileUtils"
+
 :expire_after => 3600,
 :secret => 'sD9HiXsapPu2l0'
 
-#require "FileUtils"
-
 Encoding.default_external = 'utf-8'
+
 class Event < ActiveRecord::Base
+  has_many :event_event_tags
+  has_many :event_tags, through: :event_event_tags
+
   #ttr_accessor :name, :start_date, :end_date, :location, :comment
 end
+
+class EventEventTag < ActiveRecord::Base
+  self.table_name = "events_event_tags"
+  belongs_to :event
+  belongs_to :event_tag
+end
+
+class EventTag < ActiveRecord::Base
+  has_many :event_event_tags
+  has_many :events, through: :event_event_tags
+  has_many :event_tag_attrs, through: :event_tags_event_tag_attrs
+  self.table_name = "event_tags"
+end
+
+class EventTagsEventTagAttr < ActiveRecord::Base
+  self.table_name = "event_tags_event_tag_attrs"
+end
+
+class EventTagAttr < ActiveRecord::Base
+  has_many :event_tags, through: :event_tags_event_tag_attrs
+  self.table_name = "event_tag_attrs"
+end
+
+
+
+
+
 
 class User < ActiveRecord::Base
 end
@@ -26,7 +58,41 @@ class UsersTag < ActiveRecord::Base
   self.table_name = "users_tags"
 end
 
+class AppStatus < ActiveRecord::Base
+  self.table_name = "app_status"
+end
 
+class TagAttr < ActiveRecord::Base
+  self.table_name = "tag_attrs"
+end
+
+
+
+helpers do
+# def login
+   # データーベースの値と比較
+ #  if params['id'], params['pw']
+ #   session[:login] = 'What should i have to put here ?'
+  #   redirect '/'
+  # else
+  #   erb :login
+  # end
+ #end
+
+ def logout
+   session.delete(:login)
+   redirect '/'
+ end
+# 毎回認証を行うのは時間がかかるためセッションがあるかどうかだけ確認
+ def need_auth
+  # 条件が偽のとき実行
+   unless session[:login]
+     erb :login
+   else
+     yield #ブロックの処理をする
+   end
+ end 
+end
 
 =begin
 EVENTS = [
@@ -51,17 +117,21 @@ get '/top' do
   erb :top
 end
 
+# -------------------------------------------------------------------ユーザー登録start
+# ユーザー登録開始
 get '/user_new' do
   @page = @params[:page]
   erb :user_new
 end
-
+# ユーザー登録終了
 post '/user_new_end' do
   # ユーザーを登録
   user = User.new
   user.user_name = params[:user_name]
   user.mail = params[:mail]
   user.pass = params[:password]
+  user.user_images = [params[:user_img_path]].join("\n")
+
   day = Time.now
   user.registration_date = DateTime.new(day.year,day.month,day.day,day.hour,day.min,day.sec)
   user.save
@@ -77,14 +147,17 @@ post '/user_new_end' do
   @users = User.all
   erb :All_Users
 end
+# -------------------------------------------------------------------ユーザー登録end
+
 
 # トップページのイベント観覧並び替えを更新した時
 post '/top_info_chagne' do
-  
   @events = Event.where(:name => params[:keyword] )
-
 end
-
+get '/All_Users' do
+  @users = User.all
+  erb :All_Users
+end
 get '/All_Users_Tags' do
   @tags = UsersTag.all
   erb :All_Users_Tags
@@ -100,7 +173,7 @@ post '/login_end' do
   user = User.find_by_mail(params[:mail]);
   if user != nil then
     if user.pass == params[:pass] then
-      session[:login] = user.user_name
+      session[:login] = user.id
       redirect @params[:page]
     else
       "パスワードが違います"
@@ -122,14 +195,87 @@ end
 
 #ユーザーのトップページ
 get '/user_top' do
-
+  user = User.find_by_id(session[:login]);
+  #@news = UsersNews.where(user_id: session[:login])
+  @user_name = user.user_name
+  @user_img = user.user_images.split("\n")[0];
+  if user.title 
+    @user_title = user.title
+  else
+    @user_title = "凡人"
+  end 
   erb :user_top
 end
 
+
+# -------------------------------------------------------------------イベント登録start
+# イベント 登録
 get '/event_new' do
   erb :event_new
 end
-#.find_by_name(params[:keyword])
+# イベント登録終了 
+post '/event_new_end' do
+  event = Event.new
+
+  event.start_date = Date.new(2014,3,25)
+  event.end_date = Date.new(2015,3,31)
+  event.location = ""
+  event.name = params[:title]      # イベント名
+  event.latitude = params[:lat]    # 緯度
+  event.longitude = params[:lng]   # 経度
+  event.comment = ""#params[:comment] # 概要
+  
+  # 登録日
+  day = Time.now
+  event.registration_date = DateTime.new(day.year,day.month,day.day,day.hour,day.min,day.sec)
+  event.save
+
+
+
+  tags = params[:reg_tags]
+  attrs = params[:reg_attrs]
+
+  # 登録するすべてのタグ
+  tags.each_with_index do |entry, i|
+
+    searchEventTag = EventTag.find_by(name: entry)
+
+
+      tag = EventTag.new
+      tag.name = entry
+      tag.save
+    
+    event.event_tags << tag
+  end
+    # tag.events << event
+    # 属性を検索
+=begin
+     
+   rescue Exception => e
+     
+   end attrs[i].each_with_index do |selectAttr, j|
+      searchAttrs = EventTagAttr.find_by(name: selectAttr)
+      # 属性が見つかったら
+      if searchAttrs
+        gAttr = searchAttrs
+      # 属性が見つからなかったら
+      else
+        gAttr = EventTagAttr.new
+        gAttr.name = selectAttr
+        gAttr.save
+      end
+    end
+
+    tag.event_tag_attrs << gAttr
+    gAttr.event_tags << tag
+
+  end
+=end
+  redirect "/events"
+end
+# -------------------------------------------------------------------イベント登録end
+
+
 post '/search' do
   @events = Event.where("name like ?" ,"%"+params[:keyword]+"%")
   #(:name => params[:keyword] )
@@ -148,24 +294,13 @@ get '/event/:id' do
   p @event
   erb :event
 end
+
 # 管理者観覧モード
 post '/event_/:id' do
 
 end
 
-post '/event_new_end' do
-   event = Event.new
-   event.name = params[:title]
-   event.start_date = Date.new(2014,3,25)
-   event.end_date = Date.new(2015,3,31)
-   event.location = "33.5983384,130.4210585"
-   event.latlng = "eeee"
-   event.comment = params[:comment]
-   day = Time.now
-   event.registration_date = DateTime.new(day.year,day.month,day.day,day.hour,day.min,day.sec)
-   event.save
-   redirect "/events"
-end
+
 
 # 新着メッセージ
 get 'my_news' do
@@ -228,12 +363,19 @@ end
   # 現在の時間を取得する
   #time_now = Time.now.tv_sec
   # 保存先のファイルパスを生成する（実戦運用する場合、排他処理を考慮して保存先のファイル名を生成する必要があります）
+get '/Upload_DB' do
+  @upload_data = AppStatus.all
+  erb :Upload_DB
+end
 
 post '/upload' do
   if params[:input_file]
       file_ext = StringGetFileExtension(params[:input_file][:filename])
       if (FileExtensionGetAllowUpload(file_ext))
-        send_path = "upload/#{params[:input_file][:filename]}"
+        new_app_status = AppStatus.new    # 新しいデータベース作成
+        new_app_status.user_name = "tmp"
+        new_app_status.save
+        send_path = "upload/"+new_app_status.id.to_s+"."+file_ext
         save_path = "public/"+send_path
         File.open(save_path, 'wb') do |f|
           f.write params[:input_file][:tempfile].read
@@ -250,24 +392,17 @@ end
 
 
 
-
-
-
-# アップロードした画像の表示
-get '/images' do
-images_name = Dir.glob("public/images/*")
-@images_path = []
-images_name.each do |image|
-@images_path << image.gsub("public/", "./")
+# タグの検索  非同期 
+post '/tag_search' do
+  keyword = params[:keyword]
+  if keyword.length > 0 then
+    eventTag = EventTag.where("name like ?",keyword+"%")
+    if eventTag then
+      eventTag
+    else
+      "error"  
+    end
+  else
+    "no"
+  end
 end
-haml :images
-end
-=begin
-   EVENTS << {
-      name: params[:name],
-      start_date: Date.parse(params[:start_date]),
-      end_date: Date.parse(params[:end_date]),
-      location: params[:location],
-      comment: params[:comment]
-   }
-=end

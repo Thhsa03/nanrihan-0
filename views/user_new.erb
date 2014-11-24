@@ -69,10 +69,11 @@
 <script language="javascript" type="text/javascript">
 function xSubmit()
 {
-    d=document;
+    d = document;
     d.f.user_name.value = d.getElementsByName("s_user_name")[0].value;
     d.f.password.value = d.getElementsByName("s_password")[0].value;
-    d.f.mail.value = d.getElementsByName("s_mail")[0].value;
+    d.f.mail.value = d.getElementsByName("s_mail")[0].value;    // 名前は複数取得してくるのでその0番目を取得
+    d.f.user_img_path.value = d.getElementById("user_img").src;
 }
 </script>
 
@@ -80,6 +81,7 @@ function xSubmit()
         <input type="hidden" name="user_name">
         <input type="hidden" name="password">
         <input type="hidden" name="mail"> 
+        <input type="hidden" name="user_img_path">
     <div>
         <p>趣味、職業、その他ユーザー情報タグ:<br>
             <% for i in 0..9 %>

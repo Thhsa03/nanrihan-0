@@ -17,145 +17,507 @@
     <script src="lib/datepicker/js/locales/bootstrap-datepicker.ja.js" type="text/javascript"></script>
     <script src = "js/XMLHttpRequest.js" type="text/javascript"></script>
     <script type="text/javascript">
-  //  $(function() { $('#dp1').datepicker( { format: 'dd/mm/yyyy',language: 'ja'} ); } );
-    $(function() { $('.date').datepicker( { format: 'dd/mm/yyyy',language: 'ja'} ); } );
+    $(function() { $('.date').datepicker( { format:'yyyy/mm/dd' ,language: 'ja'} ); } );
     </script>
+    <!--テーブルコントロール-->
+    <script type="text/javascript" src="js/TableControl.js"></script>
     <!--google mapの埋め込み-->
     <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDuuhtgBe7wLTq3ck4t3xWth-c7eAZuX2M&sensor=false"></script>
     <script type="text/javascript" src="js/GoogleMapsScript_Top.js"></script>
-
-
-    	<script type="text/javascript">
-        	var form = document.getElementById("select_img");
-        	var input = form.input_file;
-        	// 受信
-        	xhr.onload = function(e)
-	        {
-	            var text = xhr.response;
-	            if(text != "error")
-	            {
-	                document.getElementById("event_img").src = text;
-	            }
-	        };
-	        // 自動送信
-	        input.onchange = function ()
-	        {
-	            if(this.value)
-	            {
-	                if(!(window.FormData))
-	                {
-	                    form.submit();
-	                    return;
-	                }
-	                var form_data = new FormData(form);
-	                xhr.open(form.method, form.action); 
-	                xhr.responseType = "text";
-	                xhr.send(form_data);
-	            }
-	        };
-	        </script>
+    <!-- 画像の位置情報取得-->
+	<script type="text/javascript" src="lib/exif-reader/binaryajax.js"></script>
+	<script type="text/javascript" src="lib/exif-reader/exif.js"></script>
+	<script type="text/javascript" src="js/ExifControl.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/scroll.css">
 </head>
 <body onload="init()">
 	<div id="header" class="container" style="background:red;"></div>
-	<div class="container" style="padding:20px 0"><!-- 左右スペースをどれだけ空けるか-->
-		<form action="/event_new_end" method='post'>
+	<div class="container" style="padding:20px 0"><!-- 上下スペースをどれだけ空けるか-->
+	<!--inline horizontal 指定なし がある-->
+		<form action="/event_new_end" method='post' id="page_form">
+			<!-- 1行目 -->
 			<div class="row">
-			<!--inline horizontal 指定なしがある-->
-				<div class="col-sm-5">
+				<!-- イベント基本情報 -->
+				<div class="col-sm-6">
 					<div class="form-group">
-						<!--has-error sr-only -->
 						<label class="control-label" for="title">イベント名</label>
 						<input type="text" class="form-control" name="title" placeholder="イベント名">
+						<!--has-error sr-only -->
 						<!-- <span class="helpe-block">エラー</span>-->
 						<!-- <input type="subit" class="btn btn-primary" value="送信">-->
 					</div>
+					<!-- 指定した行数+1-->
+					<textarea class="form-control" name="comment" rows="5" placeholder="概要" id="sdf"></textarea>
 				</div>
-			<div class "row">
-			<div class="col-sm-12" id="map_canvas"  style="width:800px; height:300px">
-
-        	</div>
-        	<div class="col-sm-12">
-        		<input type="text" class="form-control" id= "lon_text" name="lon" placeholder="経度">
-        		<input type="text" class="form-control" id= "lat_text" name="lat" placeholder="緯度">
-        		<button type="button" class="btn btn-info" onclick="getCenterPosText()">位置の所得</button>
-        	</div>
-        	</div>
-        	<!--スタイルが崩れないように-->
-        	<div class="clearfix"></div>
-        	<div class="col-sm-6">
-
-<!--		<form class="form-horizontal" style="margin-bottonm: 15px">
-				<div class="form-group">
-					<label class="control-label col-sm-2" for="title">イベント名</label>
-					<div class="col-sm-4">
-						<input type="text" class="form-control" placeholder="イベント名">
+			</div>
+			<br>
+			<br>
+			<br>
+			<!-- 2行目-->
+			<div class="row">
+				<!-- タグ一覧-->
+				<div class="col-sm-4">
+					<div class="col-sm-12">
+						<div class="form-group">
+						<label class="control-label" for="title">登録するタグ検索</label>
+						<input type="text" class="form-control" id= "tag_text" placeholder="タグ" onKeyUp="tag_input_textbox()">
+		        		</div>
+					</div>
+					<div class="col-sm-12">
+						<div class="scroll" style="height:250px" >
+						    <table class="table table-hover" id ="cand_tag_table">
+					  			<thead>
+					  				<tr>
+					  					<th style="width:150px">タグ候補</th>
+					  					<th>タグ属性</th>
+					  				</tr>
+					  			</thead>
+					  			<tbody>
+					    			<tr></tr>
+								</tbody>
+							</table>
+						</div>
 					</div>
 				</div>
-			</form>-->
-				<!--datepikeの独自パラメータ data-date format -->
-	        	<!-- これはjavascriptで設定する方法もある。 その方が便利なこともある。-->
-	        	<img src="img/default_event_img.png" id ="event_img" width="168" height="228"><br>
-	        	<form action="/upload" method ="POST" enctype="multipart/form-data" id="select_img">
-	        		<input type="file" name="input_file">
-        		</form>
-
-	        	<button class="btn btn-info">他にも画像を使う</button>
-	        </div>
-	        <div class="col-sm-6">
-		        <table class="table table-hover">
-	  				<thead></thead>
-	  				<tbody>
-	  				<!-- jsで行を増やす アニメーション？-->
-	    			<tr>
-	      				<td>id</td>
-	      				<td>img</td>
-	    			</tr>
-
-				  </tbody>
-				</table>
+				<div class="col-sm-1">
+					<br>
+					<br>
+					<br>
+					<br>
+		        	<p>
+			        	<button type="button" class="btn btn-info" onclick="reg_tag_table_push()">
+			       			追加→
+			        	</button>	
+			        </p>
+				</div>
+				<div class="col-sm-5">
+					<label class="control-label" for="title">登録するタグ一覧</label><br>
+					<table class="table" id ="reg_tag_table">
+			  			<thead>
+		  					<tr>
+		  						<th>登録タグ</th>
+		  						<th>タグ属性</th>
+		  					</tr>
+		  				</thead>
+		  				<tbody>
+		    				<tr></tr>
+					  	</tbody>
+					</table>
+				</div>
+				<div class="col-sm-2">
+			        <p>
+			        	<div class="form-group">
+	        				<label for="">追加するタグ属性</label>
+		        			<input type="text" class="form-control" id= "" name="" placeholder="タグ属性">
+		        		</div>
+		        	</p>
+		        	<p>
+			        	<button type="button" class="btn btn-info" onclick="get_img_pos()">
+			       			選択した属性の<br>削除
+			        	</button>
+			        </p>
+			        <p>
+			        	<button type="button" class="btn btn-info" onclick="reg_tag_del()">
+			       			選択したタグの<br>削除
+			        	</button>
+			        </p>
+				</div>
 			</div>
-        	<div class="clearfix"></div>
-	        <div class="col-sm-12">
-    	    	<p>分類タグ<br>
-		        	<% for i in 0..9 %>
-		                <% for j in 0..4 %>
-		                <div class="col-sm-1">
-		                    <input  class="form-control" name="tags[]" type="text">
-		                </div>
-		                <% end %>
-		                <br>
+			<!-- 3行目 -->
+			<div class="row">
+        		<!--画像テーブル-->
+        		<div class="col-sm-5">
+			<!--        	画像番号
+			        		<input type="number" id="select_pos_img_num" min="1" value="1">
+			        		の画像から
+			        		<button type="button" class="btn btn-info" onclick="get_img_pos()">
+			        		位置情報を取得
+			        		</button>
+		        		</div>-->
+    				<!--1行目-->
+    				<div class="col-sm-12">
+				        <table class="table table-hover" id ="img_table">
+			  				<thead>
+			  					<tr>
+			  						<th>イメージ画像</th>
+			  						<th>位置情報</th>
+			  					</tr>
+			  				</thead>
+			  				<tbody>
+			    				<tr></tr>
+						  </tbody>
+						</table>
+					</div>
+					<!--2行目-->
+					<div class="col-sm-12">
+		        		<input type="file" name="input_img">
+        			</div>
+        		</div>
+        		<!-- マップ -->
+				<div class="col-sm-7">
+					<div class="col-sm-12">
+        				<div id="map_canvas" style="width:700px; height:550px"></div>
+        			</div>
+        			<div class="col-sm-12">
+        				<label class="control-label" for="title">登録するマップの位置</label>
+        			</div>
+        			<div class="col-sm-12 form-inline">
+        				<div class="col-sm-6">
+        					<div class="form-group">
+	        					<label for="lat">緯度</label>
+		        				<input type="text" class="form-control" id= "lat_text" name="lat" placeholder="緯度">
+	        				</div>
+	        			</div>
+	        			<div class="col-sm-6">
+	        				<div class="form-group">
+	        					<label for="lat">経度</label>
+		        				<input type="text" class="form-control" id= "lng_text" name="lng" placeholder="経度">
+		        			</div>
+		        		</div>
+		        	</div>
+        		</div>
+        	</div>
+        	<!-- 4行目 -->
+        	<div class="row">
+	    		<!-- 日付テーブル-->
+			    <div class="col-sm-12">
+				    <label class="control-label">日時</label>
+				    <table class="table table-hover" id ="date_table">
+		  				<thead>
+		  					<tr>
+		  						<th>開始日</th>
+		  						<th></th>
+		  						<th>終了日</th>
+		  					</tr>
+		  				</thead>
+		  				<tbody>
+			  				<tr>
+			    			</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="col-sm-12 form-inline">
+					<div class="input-group date col-sm-4">
+						<input class="form-control" size="16" type="text" id ="startDate">
+						<span class="input-group-addon">
+							<span class="add-on glyphicon glyphicon-th"></span>
+						</span>
+					</div>
 
-        	<div class="clearfix"></div>
-		            <% end %>
-		        </p>
-		    </div>
-        	<div class="clearfix"></div>
-		    <div class="col-sm-12">
-			    <label class="control-label">日時</label>
-		        <div class="input-group date col-sm-4" data-date="12-02-2012">
-		           	<input class="form-control" size="16" type="text"><!--結合させるもの-->
-		           	<span class="input-group-addon"><!--inputグループ 結合-->
-		           		<span class="add-on glyphicon glyphicon-th"></span><!--カレンダーアイコン-->
-		           	</span>
-		        </div>
-		        <!-- h系のタグを使うと崩れる-->
-		        <label class="control-label" >~</label>
-		        <div class="input-group date col-sm-4" data-date="12-02-2012">
-		           	<input class="form-control" size="16" type="text"><!--結合させるもの-->
-		           	<span class="input-group-addon"><!--inputグループ 結合-->
-		           		<span class="add-on glyphicon glyphicon-th"></span><!--カレンダーアイコン-->
-		           	</span>
-		        </div>
-		    </div>
+					<label class="control-label" >~</label>
+					<div class="input-group date col-sm-4">
+						<input class="form-control" size="16" type="text" id ="endDate">
+						<span class="input-group-addon">
+							<span class="add-on glyphicon glyphicon-th"></span>
+						</span>
+					</div>
 
-			<div class="form-group">
-				<div class="col-sm-offset-2 col-sm-4"><!--左側2カラム 長さ4カラム-->
-					<input type="subit" class="btn btn-primary" value="送信">
+					<button class="btn btn-info" onclick="date_table_push()" type="button">
+					追加</button>
+				</div>
+			</div>
+
+
+			<!-- タイムテーブル -->
+			<div class="row">
+					<label class="control-label">時間</label>
+				    <table class="table table-hover" id ="time_table">
+		  				<thead>
+		  					<tr>
+		  						<th>日付</th>
+		  						<th>開始時間</th>
+		  						<th></th>
+		  						<th>終了時間</th>
+		  					</tr>
+		  				</thead>
+		  				<tbody>
+		  					<tr></tr>
+						</tbody>
+					</table>
+			</div>
+			<div class="row">	
+				<div class="col-sm-2">
+					<select name="date" class="form-control">
+					</select>
+				</div>
+				<div class="col-sm-1">
+					<select name="am_pm" class="form-control" style="width:80px;">
+						<option value="">午前</option>
+						<option value="">午後</option>
+					</select>
+				</div>
+				<div class="col-sm-1">
+					<select name="hour" class="form-control" style="width:80px;">
+						<% for i in 1..12 %>
+							<option value=""><%=i%>時</option>
+						<% end %>
+					</select>
+				</div>
+					<div class="col-sm-1">
+						<select name="minute" class="form-control" style="width:80px;">
+							<% for i in 0..59 %>
+								<option value=""><%=i%>分</option>
+							<% end %>
+						</select>
+					</div>
+					<div class="col-sm-1">
+					</div>
+
+					<div class="col-sm-2">
+						<select name="am_pm" class="form-control" style="width:80px;">
+							<option value="">午前</option>
+							<option value="">午後</option>
+						</select>
+					</div>
+					<div class="col-sm-1">
+						<select name="hour" class="form-control" style="width:80px;">
+							<% for i in 1..12 %>
+								<option value=""><%=i%>時</option>
+							<% end %>
+						</select>
+					</div>
+					<div class="col-sm-1">
+						<select name="minute" class="form-control" style="width:80px;">
+							<% for i in 0..59 %>
+								<option value=""><%=i%>分</option>
+							<% end %>
+						</select>
+					</div>
+					<button class="btn btn-info" onclick="time_table_push()" type="button">
+						追加</button>
+		    	</div>
+				<div class="form-group">
+					<div class="col-sm-offset-2 col-sm-4"><!--左側2カラム 長さ4カラム-->
+						<input type="submit" class="btn btn-primary" value="送信">
+					</div>
 				</div>
 			</div>
 		</form>
 	</div>
+
 	<div id="footer" class="container"></div>
+	<script type="text/javascript">
+    	var form = document.getElementById("page_form");
+        var input = form.input_img;
+		/*********************************- 画像テーブル機能-*********************************/
+
+		// 自動送信 フォームに変化があった場合
+	    input.onchange = function ()
+	    {
+	        if(this.value)
+	    	{
+	        	if(!(window.FormData))	// 送信ができない場合
+	            {
+	            	return;
+	            }
+	            var form_data = new FormData();
+	            form_data.append("input_file",input.files[0]);
+	            xhr.open("POST", "/upload"); 
+	            xhr.responseType = "text";
+	            xhr.send(form_data);
+	        }
+	    };
+
+        // 受信
+        xhr.onload = function(e)
+        {
+	    	var text = xhr.response;
+	        if(text != "error")
+	        {
+	      	    img_table_push(text);	// テーブルに画像の追加
+	        }
+	    };
+
+
+	    // 画像の位置データ取得
+	   	function img_table_click(select_num)
+	   	{
+	   		var img  = document.getElementById("upload_img_"+select_num);
+			var exif = new Exif( img );
+			exif.load( function()
+			{
+				var tblObj = document.getElementById("img_table");
+				var readData = exif.getData();
+				var lat;
+				var lng;
+				lat = getPercentageLat(readData);
+				lng =  getPercentageLng(readData);
+				if (lat != null && lng != null)
+				{
+					document.getElementById("lat_text").value = lat;
+					document.getElementById("lng_text").value = lng;
+					movePos(lat,lng);
+					tblObj.rows[select_num].cells[1].innerHTML = "○<br>"+lat+" "+lng;
+				}
+				else
+				{
+					tblObj.rows[select_num].cells[1].innerHTML = "×<br>情報なし";
+				}
+			} );
+	   	};
+
+	    // 画像の追加
+	    function img_table_push(event_img)
+	    {
+	    	var tblObj = document.getElementById("img_table");
+		 	var rowCnt = tblObj.rows.length;					// テーブルの行数を取得
+			var colCnt = tblObj.rows[0].cells.length;			// 行内セルの数を取得
+		  	var row = tblObj.insertRow(rowCnt);       			// 行の末尾に,新規行を追加
+			row.insertCell(0).innerHTML = "<img id=\"upload_img_"+rowCnt+"\" src=\""+event_img+"\" width=\"80px\" height=\" 80px\">";         	// セル内のhtml書き換え
+			row.insertCell(1).innerHTML ="";
+			row.setAttribute('onclick','img_table_click('+rowCnt+');');
+		};
+
+		/*********************************- 画像テーブル機能-*********************************/
+
+
+
+//.files[0]
+		/*********************************- タグ追加機能-*********************************/
+
+
+		var select_cand_tag = -1;
+		function cand_tag_select(select_num,obj){ select_cand_tag = select_num; 
+			table_color_select("cand_tag_table",obj);};
+		var select_reg_tag = -1;
+		function reg_tag_select(select_num,obj){ select_reg_tag = select_num; table_color_select("reg_tag_table",obj);};
+
+		function table_color_select(table_Id,obj)
+		{
+			var tblObj = document.getElementById(table_Id);
+			var maxCnt = tblObj.rows.length;
+      	    for( var i = 2 ; i < maxCnt ; i++ )
+      	    {
+      	    	tblObj.rows[i].style.backgroundColor='#ffffff';
+      	    }
+		 	obj.style.backgroundColor='#00aaff'
+		};
+
+
+		function reg_tag_del()
+		{
+			var tblObj = document.getElementById("reg_tag_table");
+			var maxCnt = tblObj.rows.length;
+      	    for( var i = 2 ; i < maxCnt ; i++ )
+      	    {
+      	    	tblObj.rows[i].style.backgroundColor='#ffffff';
+      	    }
+			tblObj.deleteRow(select_reg_tag);
+			select_reg_tag = -1;
+		};
+		// テキストボックス にタグ名の入力がされたら
+		function tag_input_textbox()
+		{
+			// 送信
+			var xhr_1 = XMLHttpRequestCreate();
+			var form_data = new FormData();
+	        form_data.append("keyword",document.getElementById("tag_text").value);
+	        xhr_1.open("POST", "/tag_search"); 
+	        xhr_1.responseType = "text";
+	        xhr_1.send(form_data);
+	        // ボタン無効
+	        //document.hogehoge.delrow.disabled=true;
+	        // 受信
+	        xhr_1.onload = function(e)
+        	{
+	    		var text = xhr_1.response;
+	    		//document.getElementById("sdf").value =text;
+	    		var tblObj = document.getElementById("cand_tag_table");
+	    		if (text=="no")
+	    		{
+	    			var rowCnt = tblObj.rows.length-2;	// テーブルの行数を取得
+	    			for( var i = rowCnt ; i > 0; i-- )
+		      	    {
+	 					tblObj.deleteRow(-1);
+		      	    }
+	    		}
+	    		else
+	    		{
+		      	    var colCnt = tblObj.rows[0].cells.length;// 行内セルの数を取得
+		      	    var rowCnt = tblObj.rows.length-2;	// テーブルの行数を取得
+		      	    var nextCnt = 0+1;	// 行数を取得する
+		      	    // 減らす
+		      	    if( rowCnt > nextCnt )
+		      	    {
+		      	    	for( var i = rowCnt ; i > nextCnt; i-- )
+		      	    	{
+	 						tblObj.deleteRow(-1);
+		      	    	}
+		      	    }
+		      	    // 増やす
+		      	    else if( rowCnt < nextCnt )
+		      	    {
+		      	      	for( var i = rowCnt ; i < nextCnt; i++ )
+		      	    	{
+	 						var row = tblObj.insertRow(-1);// 行の末尾に,新規行を追加
+							row.insertCell(0);         	// セル内のhtml書き換え
+							row.insertCell(1);
+							num = i+2;
+							row.setAttribute('onclick',"cand_tag_select("+num+",this);");
+		      	    	}
+		      	    }
+		      	    var rowNextCnt = tblObj.rows.length - 2;// テーブルの行数を取得
+		      	    //for文で回す
+		      	    var i = 2;
+		      	    for(  ; i < rowNextCnt ;  )
+		      	    {
+		      	    	tblObj.rows[i].cells[0].innerHTML="";
+		      	    	tblObj.rows[i].cells[1].innerHTML="";
+		      	    	i++;
+		      	    }
+		      	    // 最後だけ普通の候補
+		      	    tblObj.rows[i].cells[0].innerHTML= document.getElementById("tag_text").value;
+		      	    tblObj.rows[i].cells[1].innerHTML="";
+	    		}
+
+	    	};
+		}
+
+
+		function reg_tag_table_push()
+		{
+			if( select_cand_tag  != -1 )
+			{
+				var candTblObj = document.getElementById("cand_tag_table");
+				var regTblObj = document.getElementById("reg_tag_table");
+  				var rowCnt = regTblObj.rows.length;
+  			var row = regTblObj.insertRow(rowCnt);
+  			var tmp = candTblObj.rows[select_cand_tag].cells[0].innerHTML;
+    		row.insertCell(0).innerHTML = tmp+"<input type=\"hidden\" name=\"reg_tags[]\" value=\""+tmp+"\">";
+    		tmp = candTblObj.rows[select_cand_tag].cells[1].innerHTML;
+   			row.insertCell(1).innerHTML = tmp+"<input type=\"hidden\" name=\"reg_attrs[]\" value=\""+tmp+"\">";
+   			row.setAttribute('onclick',"reg_tag_select("+select_cand_tag +",this);");
+
+			}
+		}
+
+		/*********************************- タグ追加機能-*********************************/
+
+
+
+	    // 時間の追加
+	    function time_table_push()
+	    {
+	    	var stringArray = new Array(4);
+	    	stringArray[0] =  "";	// ドロップダウン 日付
+	    	stringArray[1] = "";	// ドロップダウン 開始時間
+	    	stringArray[2] = "～";	// ～
+	    	stringArray[3] = "";	// ドロップダウン 終了時間
+	    	// 文字の変換
+			addRow("time_table",stringArray);
+	    };
+
+		// 日付の追加
+	    function date_table_push()
+	    {
+	    	var stringArray = new Array(3);
+	    	stringArray[0] = document.getElementById("startDate").value;	// 開始日
+	    	stringArray[1] = "～";	// ～
+	    	stringArray[2] = document.getElementById("endDate").value;	// 終了日
+	    	// 文字の変換
+			addRow("date_table",stringArray);
+	    };
+	</script>
 	<script src="lib/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
 </body>
 </html>

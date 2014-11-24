@@ -1,14 +1,14 @@
 <html>
 <head>
-	<title>イベント一覧</title>
+	<title>全てのユーザー</title>
 </head>
 <body>
 <table border="1">
 	<thead>
-		<th>イベント名</th>
-		<th>日時</th>
-		<th>コメント</th>
-		<th>登録日</th>
+		<th>メール</th>
+		<th>ユーザー名</th>
+		<th>パスワード</th>
+		<th>イメージ</th>
 	</thead>
 	<tbody>
 <% @users.each_with_index do |user, i| %>
@@ -16,6 +16,7 @@
 		<td><%= user.mail %></td>
 		<td><%= user.user_name %></td>
 		<td><%= user.pass %></td>
+		<td><%= user.user_images %></td>
 	</tr>
 <% end %>
 

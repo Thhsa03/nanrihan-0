@@ -1,0 +1,21 @@
+<html>
+<head>
+	<title>アップロードしているファイルデータベース</title>
+</head>
+<body>
+<table border="1">
+	<thead>
+		<th>ID</th>
+		<th>名前</th>
+	</thead>
+	<tbody>
+	<% @upload_data.each_with_index do |upload_datum, i| %>
+	<tr>
+		<td><%= upload_datum.id %></td>
+		<td><%= upload_datum.user_name %></td>
+	</tr>
+	<% end %>
+	</tbody>
+</table>
+</body>
+</html>

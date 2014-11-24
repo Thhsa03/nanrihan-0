@@ -5,6 +5,8 @@ class CreateUsersInfo < ActiveRecord::Migration
   		t.string :mail
   		t.string :pass
   		t.string :comment
+      t.string :user_images
+      t.string :title
   		t.datetime :registration_date
   		t.timestamps
   	end

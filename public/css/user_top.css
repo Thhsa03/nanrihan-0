@@ -1,0 +1,141 @@
+*{
+	margin:0;
+	padding:0;
+}
+body{
+	background:#000;
+	font-family:"Trebuchet MS", Helvetica, sans-serif;
+	font-size:15px;
+	color: #fff;
+	text-transform:uppercase;/*英語などのテキストの大文字表示・小文字表示を指定する際に使用 全て大文字*/
+	overflow-x:hidden;
+}
+/*div*/
+.oe_overlay
+{
+	background:#000;
+	opacity:0; /*透明度 すべて透明*/
+	position:fixed;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:100%;
+}
+
+/*すべてのメニュー <ul id="oe_menu" class="oe_menu">*/
+ul.oe_menu{
+	list-style:none;	/*先頭になにも指定しない*/
+	position:relative;	/* 位置指定 相対位置*/
+	margin:30px 0px 0px 40px;/*マージン 一番外側の空白 [上][右][下][左]*/
+	width:100px;		/*幅 すべてのメニュー*/
+	/*float:left;	/**/
+	clear:both;	/*回り込み*/
+}
+
+/* 基本メニュー*/
+ul.oe_menu > li
+{
+	width:100px;	/* 一つ一つのタイルのサイズt*/
+	height:100px;
+	padding-bottom:2px;/*下のパッティング(空白)を指定*/
+	/*float:left;/*指定した要素を左に寄せます。後に続く内容はその右側に回り込みます。*/
+	position:relative;/*ボックスの配置方法 相対 */
+}
+
+/* リンクフォント*/
+ul.oe_menu > li > a{
+	display:block;
+	background-color: #87CEFA;      /*  101010*/
+	color:#aaa;
+	text-decoration:none;	/*テキストに線は付かず、点滅もしません。*/
+	font-weight:bold;		/*フォントの太さ 数値指定もできる*/
+	font-size:12px;
+	width:100px;
+	height:70px;
+	padding:10px;
+	margin:1px;
+	text-shadow:0px 0px 1px #000;
+	opacity:0.8;
+}
+/*半角スペースは下の階層すべてに指定する場合*/
+/* E > F　（子要素にのみ適用）
+セレクタを「>」で区切ると、ある要素の直下の階層にある要素にスタイルを適用します。*/
+
+/*  ホバー すると背景が白？？*/
+ul.oe_menu > li > a:hover,
+ul.oe_menu > li.selected > a
+{
+	background:#fff;/* 背景  */
+	color:#101010;	/* 文字の色*/
+	opacity:1.0; 	/* 要素の透明度*/
+}
+/*  ホバー すると背景が---   タイルの方*/
+.oe_wrapper ul.hovered > li > a
+{
+	background: #88efff;				/* 背景  */
+	text-shadow:0px 0px 1px #FFF;	/* シャドウ*/
+}
+/*ホバーした後にでるメニュー*/
+ul.oe_menu div
+{
+	position:absolute;
+	top:103px;
+	left:1px;
+	background:#fff;
+	width:208px;
+	height:180px;
+	padding:30px;
+	display:none;
+}
+
+ul.oe_menu div ul li a{
+	text-decoration:none;
+	color:#222;
+	padding:2px 2px 2px 4px;
+	margin:2px;
+	display:block;
+	font-size:12px;
+}
+
+ul.oe_menu div ul.oe_full{
+	width:100%;
+}
+/*ホバーしたときに出るメニューの選択している文字*/
+/* ホバーすると背景が黒 文字が白*/ 
+ul.oe_menu div ul li a:hover{
+	background:#88efff;
+	color:#fff;
+}
+
+ul.oe_menu li ul{
+	list-style:none;
+	float:left;
+	width: 150px;
+	margin-right:10px;
+}
+
+/*ホバーしたときに出てくるメニューの頭の文字*/
+li.oe_heading
+{
+	color:#aaa;
+	font-size:16px;
+	margin-bottom:10px;
+	padding-bottom:6px;
+	border-bottom:1px solid #ddd;
+}
+
+
+/* ドロップダウン時のメニューの位置*/
+ul.oe_menu > li > div
+{
+	left:110px;
+	top:-10px;
+}
+
+#news_div
+{
+	position:absolute;
+	left:200px;
+	top:100px;
+}
+
